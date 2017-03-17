@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Layout Lang Demo</title>
+
+    <style>
+        body, html {
+            margin:0;
+            padding:0;
+            color:#000;
+            background:#a7a09a;
+        }
+        h1 {
+            margin:0;
+        }
+        h2 {
+            margin:0 0 1em;
+        }
+        #wrap {
+            width:800px;
+            margin:0 auto;
+            background:#99c;
+        }
+        #header {
+            padding:5px 10px;
+            background:#ddd;
+        }
+        #nav {
+            padding:5px 10px;
+            background:#c99;
+        }
+        #main {
+            float:left;
+            width:500px;
+            height:300px;
+            padding:10px;
+            background:#9c9;
+        }
+        #sidebar {
+            float:right;
+            width:230px;
+            padding:10px;
+            background:#99c;
+        }
+        #footer {
+            clear:both;
+            padding:5px 10px;
+            background:#cc9;
+        }
+        #footer p {
+            margin:0;
+        }
+        #nav ul {
+            margin:0;
+            padding:0;
+            list-style:none;
+        }
+        #nav li {
+            display:inline;
+            margin:0;
+            padding:0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="wrap">
+    <div id="header"><h1>Document Heading</h1></div>
+    <div id="nav">
+        <ul>
+            <li><a href="#">Option 1</a></li>
+            <li><a href="#">Option 2</a></li>
+        </ul>
+    </div>
+    <div id="main">
+    </div>
+    <div id="sidebar">
+        <h2>Layout Code</h2>
+        <textarea id="prog" style="height:250px; width: 100%;">
+insert 70 content
+insert 10 sidebar
+left content
+insert 20 item1
+insert 20 item2
+insert 20 item3
+insert 20 item4
+insert 20 item5
+        </textarea>
+        <button onclick="javascript:runClicked()" style="width:100%">Run</button>
+    </div>
+    <div id="footer">
+        <p>Footer</p>
+    </div>
+
+</div>
+
+<script>
+let state = {cursor: document.getElementById('main'), pos: 'left'}
+
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+}
+
+function runCmd(cmd, args){
+    switch(cmd){
+        case 'left':
+            state.cursor = document.getElementById(args[0])
+            break
+        case 'insert':
+            let el = document.createElement('div')
+            el.id = args[1]
+            el.style.height = '100%'
+            el.style.width = args[0] + '%'
+            el.style.float = 'left'
+            el.style['background-color'] = getRandomColor()
+            el.textContent = args[1]
+            state.cursor.appendChild(el)
+            break
+        default:
+            console.error('unknown command: %s', cmd)
+    }
+}
+
+function reset(){
+    state.cursor = document.getElementById('main')
+    while (state.cursor.hasChildNodes()) {
+        state.cursor.removeChild(state.cursor.lastChild);
+    }
+}
+
+function runClicked(e){
+    let lines = document.getElementById('prog').value.split('\n')
+    
+    reset()
+
+    let idx = 1
+    for(let line of lines){
+        let [command, ...args] = line.split(' ')
+        if(!command) continue
+
+        console.log('line(%s): %s', idx, line)
+        setTimeout(() => runCmd(command, args), idx * 500)
+        idx += 1
+    }
+}
+
+</script>
+
+</body>
+</html>
